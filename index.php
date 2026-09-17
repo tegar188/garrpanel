@@ -3,6 +3,9 @@ $game     = $_REQUEST['game']     ?? '';
 $user_key = $_REQUEST['user_key'] ?? '';
 $serial   = $_REQUEST['serial']   ?? '';
 
+// Log semua yang masuk
+file_put_contents('/tmp/req.log', date('Y-m-d H:i:s') . " POST: " . json_encode($_POST) . "\n", FILE_APPEND);
+
 $host = getenv('MYSQLHOST');
 $port = getenv('MYSQLPORT') ?: 3306;
 $db   = getenv('MYSQLDATABASE');
