@@ -1,5 +1,14 @@
 <?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 header('Content-Type: application/json');
+
+$debug = [
+    'host' => getenv('MYSQLHOST'),
+    'db'   => getenv('MYSQLDATABASE'),
+    'user' => getenv('MYSQLUSER'),
+];
+file_put_contents('/tmp/connect_debug.log', json_encode($_POST) . ' | ENV: ' . json_encode($debug) . "\n", FILE_APPEND);
 
 $user_key = $_POST['user_key'] ?? '';
 $serial   = $_POST['serial'] ?? '';
@@ -14,7 +23,7 @@ $pass = getenv('MYSQLPASSWORD');
 try {
     $pdo = new PDO("mysql:host=$host;port=$port;dbname=$db", $user, $pass);
 } catch (Exception $e) {
-    echo json_encode(['status' => 'error', 'data' => 'DB_ERROR']); exit;
+    echo json_encode(['status' => 'error', 'data' => 'DB_ERROR: ' . $e->getMessage()]); exit;
 }
 
 $stmt = $pdo->prepare('SELECT * FROM keys_table WHERE key_value = ? AND banned = 0 LIMIT 1');
